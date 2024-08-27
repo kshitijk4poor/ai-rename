@@ -1,8 +1,9 @@
-import sys
 import os
+import sys
 from typing import Any, Tuple
-from transformers import AutoModelForCausalLM, AutoTokenizer
+
 from PIL import Image
+from transformers import AutoModelForCausalLM, AutoTokenizer  # ignore
 
 model_id: str = "vikhyatk/moondream2"
 revision: str = "2024-08-26"
