@@ -21,15 +21,12 @@ def load_image(image_path: str) -> Image.Image:
         image = image.convert('RGBA')
     return image
 
-
 def encode_image(image: Image.Image) -> Tuple[Any, Any]:
     return model.encode_image(image)
-
 
 def generate_filename_from_answer(answer: str) -> str:
     filename = "".join(char.lower() if char.isalnum() else "_" for char in answer)
     return "_".join(filter(None, filename.split("_")))
-
 
 def generate_filename(image_path: str) -> str:
     image = load_image(image_path)
@@ -48,7 +45,6 @@ def generate_filename(image_path: str) -> str:
         tokenizer,
     )
     return generate_filename_from_answer(answer)
-
 
 def get_new_path(image_path: str, filename: str) -> str:
     directory = os.path.dirname(image_path)
