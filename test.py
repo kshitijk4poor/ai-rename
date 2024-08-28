@@ -16,7 +16,10 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model.to(device)
 
 def load_image(image_path: str) -> Image.Image:
-    return Image.open(image_path)
+    image = Image.open(image_path)
+    if image.mode == 'P' and 'transparency' in image.info:
+        image = image.convert('RGBA')
+    return image
 
 
 def encode_image(image: Image.Image) -> Tuple[Any, Any]:
@@ -33,12 +36,15 @@ def generate_filename(image_path: str) -> str:
     enc_image = encode_image(image)
     answer = model.answer_question(
         enc_image,
-        "Generate a lowercase filename with no extension, no special "
-        "characters, only key elements, one word if possible, in noun-verb "
-        "format. Avoid generic terms and aim for specificity. The filename "
-        "should enable easy identification and organization of the image "
-        "within a large collection. The filename should be concise yet "
-        "informative, using 3-5 words separated by underscores if needed.",
+        "Analyze the image and generate a concise filename (3-5 words max) "
+        "that captures its essence. Consider the following aspects:\n"
+        "1. Primary subject and action\n"
+        "2. Key visual characteristics (e.g., color, composition)\n"
+        "3. Setting or context\n"
+        "4. Unique or distinctive elements\n"
+        "5. Mood or theme (if prominent)\n"
+        "Use lowercase words separated by underscores, avoiding generic terms. "
+        "The filename should enable easy identification within a large collection.",
         tokenizer,
     )
     return generate_filename_from_answer(answer)
@@ -46,7 +52,14 @@ def generate_filename(image_path: str) -> str:
 
 def get_new_path(image_path: str, filename: str) -> str:
     directory = os.path.dirname(image_path)
-    return os.path.join(directory, filename + os.path.splitext(image_path)[1])
+    base_path = os.path.join(directory, filename)
+    extension = os.path.splitext(image_path)[1]
+    new_path = base_path + extension
+    counter = 1
+    while os.path.exists(new_path):
+        new_path = f"{base_path}_{counter}{extension}"
+        counter += 1
+    return new_path
 
 
 def rename_image(image_path: str, new_path: str) -> None:
@@ -56,8 +69,11 @@ def rename_image(image_path: str, new_path: str) -> None:
 def process_image(image_path: str) -> None:
     filename = generate_filename(image_path)
     new_path = get_new_path(image_path, filename)
-    rename_image(image_path, new_path)
-    print(f"Image renamed to: {new_path}")
+    if new_path != image_path:
+        rename_image(image_path, new_path)
+        print(f"Image renamed to: {new_path}")
+    else:
+        print(f"Image already has the suggested name: {image_path}")
 
 
 def process_folder(folder_path: str) -> None:
