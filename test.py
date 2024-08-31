@@ -64,31 +64,44 @@ def get_new_path(image_path: str, filename: str) -> str:
 
 
 def rename_image(image_path: str, new_path: str) -> None:
-    os.rename(image_path, new_path)
+    try:
+        os.rename(image_path, new_path)
+    except Exception as e:
+        print(f"Error renaming image {image_path} to {new_path}: {e}")
 
 
-def process_image(image_path: str) -> None:
-    filename = generate_filename(image_path)
-    new_path = get_new_path(image_path, filename)
-    if new_path != image_path:
-        rename_image(image_path, new_path)
-        print(f"Image renamed to: {new_path}")
-    else:
-        print(f"Image already has the suggested name: {image_path}")
+def process_image(image_path: str, index: int, total: int) -> None:
+    try:
+        filename = generate_filename(image_path)
+        new_path = get_new_path(image_path, filename)
+        if new_path != image_path:
+            rename_image(image_path, new_path)
+            print(f"{index}/{total} Image renamed to: {new_path}")
+        else:
+            print(f"{index}/{total} Image already has the suggested name: {image_path}")
+    except Exception as e:
+        print(f"Error processing image {image_path}: {e}")
 
 
 def process_folder(folder_path: str) -> None:
     supported_extensions = (".jpg", ".jpeg", ".png", ".bmp", ".gif")
-    for root, _, files in os.walk(folder_path):
-        for file in files:
-            if file.lower().endswith(supported_extensions):
-                image_path = os.path.join(root, file)
-                process_image(image_path)
+    image_paths = [
+        os.path.join(root, file)
+        for root, _, files in os.walk(folder_path)
+        for file in files
+        if file.lower().endswith(supported_extensions)
+    ]
+
+    image_count = len(image_paths)
+    print(f"Found {image_count} image{'s' if image_count != 1 else ''} in the folder.")
+
+    for index, image_path in enumerate(image_paths, start=1):
+        process_image(image_path, index, image_count)
 
 
 def main(path: str) -> None:
     if os.path.isfile(path):
-        process_image(path)
+        process_image(path, 1, 1)
     elif os.path.isdir(path):
         process_folder(path)
     else:
@@ -102,8 +115,4 @@ if __name__ == "__main__":
         sys.exit(1)
 
     path = sys.argv[1]
-    try:
-        main(path)
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        sys.exit(1)
+    main(path)
