@@ -29,7 +29,7 @@ AI Image Renamer is a Python script that uses AI to automatically generate descr
 3. Install the required dependencies:
    ```
    pip install -r requirements.txt
-   ollama pull moondream
+   ollama pull llava-llama3
    ```
 
 ## 🔧 Usage
