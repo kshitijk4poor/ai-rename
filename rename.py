@@ -16,13 +16,25 @@ def load_image(image_path: str) -> Image.Image:
 
 def encode_image(image: Image.Image) -> str:
     buffered = BytesIO()
-    image.save(buffered, format="JPEG")
+    image.save(buffered, format=image.format)
     return b64encode(buffered.getvalue()).decode("utf-8")
 
 
 def generate_filename_from_answer(answer: str) -> str:
+    # Remove file extensions if present
+    answer = answer.rsplit(".", 1)[0]
+
     filename = "".join(char.lower() if char.isalnum() else "_" for char in answer)
-    return "_".join(filter(None, filename.split("_")))
+    words = filter(None, filename.split("_"))
+    filtered_words = []
+    for word in words:
+        if not word.isdigit():
+            filtered_words.append(word)
+
+    if not filtered_words:
+        return "unnamed_image"  # Fallback if all words are numbers
+
+    return "_".join(filtered_words)
 
 
 def generate_filename(image_path: str) -> str:
@@ -42,7 +54,8 @@ def generate_filename(image_path: str) -> str:
                     "4. Unique or distinctive elements\n"
                     "5. Mood or theme (if prominent)\n"
                     "Use lowercase words separated by underscores, avoiding generic terms. "
-                    "The filename should enable easy identification within a large collection."
+                    "The filename should enable easy identification within a large collection. "
+                    "Do not use numbers or dates as the sole description."
                 ),
                 "images": [encoded_image],
             }
