@@ -33,7 +33,8 @@ python rename.py <image_path_or_folder_path>
 ```
 ## 📋 TODO
 
-- [ ] Add more test cases and edge case handling
+- [ ] Make the renaming for accurate
 - [x] Switch to ollama for inference
 - [x] Enhance the rename conflict resolution algorithm
-- [ ] Expand supported image formats
+- [x] Expand supported image formats
+- [ ] Convert it to package
