@@ -41,21 +41,21 @@ def generate_filename(image_path: str) -> str:
     image = load_image(image_path)
     encoded_image = encode_image(image)
     response = ollama.chat(
-        model="moondream",
+        model="llava-llama3",
         messages=[
             {
                 "role": "user",
                 "content": (
-                    "Analyze the image and generate a concise filename (3-5 words max) "
-                    "that captures its essence. Consider the following aspects:\n"
-                    "1. Primary subject and action\n"
-                    "2. Key visual characteristics (e.g., color, composition)\n"
-                    "3. Setting or context\n"
-                    "4. Unique or distinctive elements\n"
-                    "5. Mood or theme (if prominent)\n"
-                    "Use lowercase words separated by underscores, avoiding generic terms. "
-                    "The filename should enable easy identification within a large collection. "
-                    "Do not use numbers or dates as the sole description."
+                    "Analyze the image and generate a concise, specific filename "
+                    "that uniquely describes its content. Rules:\n"
+                    "1. No special characters, only lowercase letters and underscores\n"
+                    "2. Include only key elements\n"
+                    "3. Prefer noun-verb format\n"
+                    "4. Focus on main subject(s) and any notable action\n"
+                    "5. Include distinctive visual elements or style if relevant\n"
+                    "6. Avoid generic terms, numbers, or dates\n"
+                    "The filename should clearly distinguish this image in a large collection. "
+                    "Only output the filename and nothing else."
                 ),
                 "images": [encoded_image],
             }

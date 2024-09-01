@@ -36,9 +36,5 @@ AI Image Renamer is a Python script that uses AI to automatically generate descr
 
 Run the script with a path to an image or a folder containing images:
 ```
-python test.py <image_path_or_folder_path>
+python rename.py <image_path_or_folder_path>
 ```
-
-## 👏 Acknowledgements
-
-- [Moondream](https://github.com/vikhyat/moondream) by Vikhyat Korrapati for the AI model
