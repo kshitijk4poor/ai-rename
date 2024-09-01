@@ -7,17 +7,10 @@ AI Image Renamer is a Python script that uses AI to automatically generate descr
 ## 🚀 Features
 
 - 🧠 Uses AI to analyze image content
-- 🏷️ Generates concise, descriptive filenames (3-5 words)
+- 🏷️ Generates concise, descriptive filenames
 - 📁 Supports processing individual images or entire folders
 - 🔄 Handles filename conflicts automatically
-- 🖼️ Supports various image formats (JPG, PNG, BMP, GIF)
-
-## 📋 TODO
-
-- [ ] Add more test cases and edge case handling
-- [x] Switch to ollama for inference
-- [x] Enhance the rename conflict resolution algorithm
-- [ ] Expand supported image formats
+- 🖼️ Supports various image formats (JPG, JPEG, PNG, BMP, GIF)
 
 ## 🛠️ Installation
 
@@ -38,3 +31,9 @@ Run the script with a path to an image or a folder containing images:
 ```
 python rename.py <image_path_or_folder_path>
 ```
+## 📋 TODO
+
+- [ ] Add more test cases and edge case handling
+- [x] Switch to ollama for inference
+- [x] Enhance the rename conflict resolution algorithm
+- [ ] Expand supported image formats
