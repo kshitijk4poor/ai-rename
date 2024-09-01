@@ -1,19 +1,10 @@
 import os
 import sys
-from typing import Any, Tuple
-import torch
+from base64 import b64encode
+from io import BytesIO
+
+import ollama
 from PIL import Image
-from transformers import AutoModelForCausalLM, AutoTokenizer
-
-model_id: str = "vikhyatk/moondream2"
-revision: str = "2024-08-26"
-model: AutoModelForCausalLM = AutoModelForCausalLM.from_pretrained(
-    model_id, trust_remote_code=True, revision=revision
-)
-tokenizer: AutoTokenizer = AutoTokenizer.from_pretrained(model_id, revision=revision)
-
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model.to(device)
 
 
 def load_image(image_path: str) -> Image.Image:
@@ -23,8 +14,10 @@ def load_image(image_path: str) -> Image.Image:
     return image
 
 
-def encode_image(image: Image.Image) -> Tuple[Any, Any]:
-    return model.encode_image(image)
+def encode_image(image: Image.Image) -> str:
+    buffered = BytesIO()
+    image.save(buffered, format="JPEG")
+    return b64encode(buffered.getvalue()).decode("utf-8")
 
 
 def generate_filename_from_answer(answer: str) -> str:
@@ -34,20 +27,28 @@ def generate_filename_from_answer(answer: str) -> str:
 
 def generate_filename(image_path: str) -> str:
     image = load_image(image_path)
-    enc_image = encode_image(image)
-    answer = model.answer_question(
-        enc_image,
-        "Analyze the image and generate a concise filename (3-5 words max) "
-        "that captures its essence. Consider the following aspects:\n"
-        "1. Primary subject and action\n"
-        "2. Key visual characteristics (e.g., color, composition)\n"
-        "3. Setting or context\n"
-        "4. Unique or distinctive elements\n"
-        "5. Mood or theme (if prominent)\n"
-        "Use lowercase words separated by underscores, avoiding generic terms. "
-        "The filename should enable easy identification within a large collection.",
-        tokenizer,
+    encoded_image = encode_image(image)
+    response = ollama.chat(
+        model="moondream",
+        messages=[
+            {
+                "role": "user",
+                "content": (
+                    "Analyze the image and generate a concise filename (3-5 words max) "
+                    "that captures its essence. Consider the following aspects:\n"
+                    "1. Primary subject and action\n"
+                    "2. Key visual characteristics (e.g., color, composition)\n"
+                    "3. Setting or context\n"
+                    "4. Unique or distinctive elements\n"
+                    "5. Mood or theme (if prominent)\n"
+                    "Use lowercase words separated by underscores, avoiding generic terms. "
+                    "The filename should enable easy identification within a large collection."
+                ),
+                "images": [encoded_image],
+            }
+        ],
     )
+    answer = response["message"]["content"]
     return generate_filename_from_answer(answer)
 
 

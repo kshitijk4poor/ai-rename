@@ -15,19 +15,21 @@ AI Image Renamer is a Python script that uses AI to automatically generate descr
 ## 📋 TODO
 
 - [ ] Add more test cases and edge case handling
-- [ ] Implement a quantized model for improved performance
-- [ ] Enhance the rename conflict resolution algorithm
+- [x] Switch to ollama for inference
+- [x] Enhance the rename conflict resolution algorithm
 - [ ] Expand supported image formats
 
 ## 🛠️ Installation
 
-1. Clone this repository:
+1. Download and install Ollama from [ollama.com](https://ollama.com/download).
+2. Clone this repository:
    ```
    git clone https://github.com/kshitijk4poor/ai-rename.git
    ```
-2. Install the required dependencies:
+3. Install the required dependencies:
    ```
    pip install -r requirements.txt
+   ollama pull moondream
    ```
 
 ## 🔧 Usage
@@ -39,4 +41,4 @@ python test.py <image_path_or_folder_path>
 
 ## 👏 Acknowledgements
 
-- [Moondream2](https://huggingface.co/vikhyatk/moondream2) for the AI model
+- [Moondream](https://github.com/vikhyat/moondream) by Vikhyat Korrapati for the AI model
